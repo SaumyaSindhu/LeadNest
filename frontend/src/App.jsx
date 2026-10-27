@@ -2,6 +2,31 @@ import { useCallback, useEffect, useState } from "react";
 import api from "./api";
 import "./App.css";
 
+function BrandMark() {
+  return (
+    <span className="brand-mark" aria-hidden="true">
+      <span />
+      <span />
+    </span>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" />
+    </svg>
+  );
+}
+
+function RefreshIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M13 5.5V2.8l-2 2A5 5 0 1 0 13 9" />
+    </svg>
+  );
+}
+
 export default function App() {
   const [token, setToken] = useState(
     () => localStorage.getItem("leadnest_token") || "",
@@ -38,7 +63,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (token) loadDashboard();
+    if (!token) return undefined;
+
+    const timer = setTimeout(() => {
+      void loadDashboard();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [token, loadDashboard]);
 
   async function handleLogin(event) {
@@ -73,35 +104,62 @@ export default function App() {
 
   if (!token) {
     return (
-      <main className="page login-page">
-        <form className="panel login-form" onSubmit={handleLogin}>
-          <h1>LeadNest</h1>
-          <p>Sign in to manage your leads.</p>
+      <main className="login-page">
+        <div className="login-shell">
+          <div className="login-intro">
+            <div className="brand">
+              <BrandMark />
+              <span>LeadNest</span>
+            </div>
+            <div className="intro-copy">
+              <p className="eyebrow">Lead capture, simplified</p>
+              <h1>Turn every conversation into an opportunity.</h1>
+              <p className="intro-description">
+                A focused workspace for keeping your leads organized and your
+                follow-up moving.
+              </p>
+            </div>
+            <p className="login-footnote">Simple tools. Better follow-up.</p>
+          </div>
+          <form className="panel login-form" onSubmit={handleLogin}>
+            <div className="form-heading">
+              <p className="eyebrow">Welcome back</p>
+              <h2>Sign in to LeadNest</h2>
+              <p>Access your lead-capture dashboard.</p>
+            </div>
 
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+            <div className="field">
+              <label htmlFor="email">Email address</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="you@company.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <div className="field">
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
-          {error && <p className="error">{error}</p>}
+            {error && <p className="error">{error}</p>}
 
-          <button disabled={loading}>
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
+            <button className="primary-button" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
+              {!loading && <ArrowIcon />}
+            </button>
+          </form>
+        </div>
       </main>
     );
   }
@@ -109,56 +167,78 @@ export default function App() {
   return (
     <main className="page">
       <header className="topbar">
-        <div>
-          <h1>LeadNest</h1>
-          <p>Your lead-capture dashboard</p>
+        <div className="brand">
+          <BrandMark />
+          <span>LeadNest</span>
         </div>
-        <button className="secondary" onClick={handleLogout}>
-          Log out
-        </button>
+        <div className="topbar-actions">
+          <span className="status"><span />Workspace active</span>
+          <button className="secondary" onClick={handleLogout}>Log out</button>
+        </div>
       </header>
 
       {error && <p className="error">{error}</p>}
 
       {loading && !stats ? (
-        <p>Loading dashboard...</p>
+        <section className="loading-state panel">
+          <span className="spinner" />
+          <p>Loading your dashboard...</p>
+        </section>
       ) : (
         <>
+          <section className="page-heading">
+            <div>
+              <p className="eyebrow">Overview</p>
+              <h1>Good to see you.</h1>
+              <p>Here&apos;s what&apos;s happening with your lead capture.</p>
+            </div>
+            <span className="date-label">{new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</span>
+          </section>
+
           <section className="stats-grid">
-            <article className="panel">
-              <p>Total submissions</p>
+            <article className="panel stat-card">
+              <div className="stat-label"><span className="stat-icon">↗</span> Total submissions</div>
               <h2>{stats?.totalSubmissions ?? 0}</h2>
+              <p className="stat-caption">All-time captured leads</p>
             </article>
 
-            <article className="panel">
-              <p>Widgets with submissions</p>
+            <article className="panel stat-card">
+              <div className="stat-label"><span className="stat-icon purple">◈</span> Active widgets</div>
               <h2>{stats?.widgetsWithSubmissions ?? 0}</h2>
+              <p className="stat-caption">Widgets bringing in leads</p>
             </article>
           </section>
 
-          <section className="panel">
+          <section className="panel leads-panel">
             <div className="section-heading">
-              <h2>Recent leads</h2>
+              <div>
+                <h2>Recent leads</h2>
+                <p>The latest submissions from your widgets.</p>
+              </div>
               <button
                 className="secondary"
                 onClick={loadDashboard}
                 disabled={loading}
               >
-                Refresh
+                <RefreshIcon /> Refresh
               </button>
             </div>
 
             {leads.length === 0 ? (
-              <p>No leads yet. Submit your embedded form to get started.</p>
+              <div className="empty-state">
+                <span className="empty-icon">✦</span>
+                <h3>No leads yet</h3>
+                <p>Submit your embedded form to see new leads here.</p>
+              </div>
             ) : (
               <div className="table-wrapper">
                 <table>
                   <thead>
                     <tr>
                       <th>Lead details</th>
-                      <th>Widget ID</th>
+                      <th>Widget</th>
                       <th>Country</th>
-                      <th>Date</th>
+                      <th>Captured</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -167,15 +247,15 @@ export default function App() {
                         <td>
                           {Object.entries(lead.data || {}).map(
                             ([key, value]) => (
-                              <div key={key}>
-                                <strong>{key}:</strong> {String(value)}
+                              <div className="lead-detail" key={key}>
+                                <strong>{key}</strong><span>{String(value)}</span>
                               </div>
                             ),
                           )}
                         </td>
-                        <td>{lead.widgetId}</td>
-                        <td>{lead.country || "Unknown"}</td>
-                        <td>{new Date(lead.createdAt).toLocaleString()}</td>
+                        <td><code>{lead.widgetId}</code></td>
+                        <td><span className="country-pill">{lead.country || "Unknown"}</span></td>
+                        <td className="date-cell">{new Date(lead.createdAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -184,18 +264,26 @@ export default function App() {
             )}
           </section>
 
-          <section className="panel">
-            <h2>Submissions by widget</h2>
+          <section className="panel widget-panel">
+            <div className="section-heading">
+              <div>
+                <h2>Submissions by widget</h2>
+                <p>See which widgets are doing the work.</p>
+              </div>
+            </div>
             {stats?.submissionsByWidget?.length ? (
-              <ul>
+              <ul className="widget-list">
                 {stats.submissionsByWidget.map((item) => (
                   <li key={item.widgetId}>
-                    {item.title}: {item.count} submissions
+                    <span className="widget-name"><span className="widget-dot" />{item.title}</span>
+                    <span className="widget-count">{item.count} <small>submissions</small></span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No widget submissions yet.</p>
+              <div className="empty-state compact">
+                <p>No widget submissions yet.</p>
+              </div>
             )}
           </section>
         </>
