@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Widget from "../models/Widget.js";
 import Submission from "../models/Submission.js";
+import { getGeolocation } from "../services/geolocation.service.js";
 
 const allowedFieldTypes = ["text", "email", "tel", "number", "textarea"];
 
@@ -167,12 +168,16 @@ export async function createSubmission(req, res) {
       }
     }
 
+    const location = await getGeolocation(req.ip);
+
     const submission = await Submission.create({
-      // Always derive ownership from the database widget, never the request.
+      // Ownership always comes from the database widget.
       tenantId: widget.tenantId,
       widgetId: widget._id,
       data,
       sourceUrl: safeSourceUrl,
+      country: location.country,
+      city: location.city,
     });
 
     return res.status(201).json({
