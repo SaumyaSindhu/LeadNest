@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Widget from "../models/Widget.js";
 import Submission from "../models/Submission.js";
 import { getGeolocation } from "../services/geolocation.service.js";
+import NotificationJob from "../models/NotificationJob.js";
 
 const allowedFieldTypes = ["text", "email", "tel", "number", "textarea"];
 
@@ -179,6 +180,18 @@ export async function createSubmission(req, res) {
       country: location.country,
       city: location.city,
     });
+
+    try {
+      await NotificationJob.create({
+        submissionId: submission._id,
+        tenantId: widget.tenantId,
+        type: "EMAIL",
+      });
+    } catch (error) {
+      // The lead is already saved. Never turn a successful
+      // submission into a failed response because queueing failed.
+      console.error("Could not queue notification:", error.message);
+    }
 
     return res.status(201).json({
       success: true,

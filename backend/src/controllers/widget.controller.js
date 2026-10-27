@@ -221,7 +221,7 @@ export async function updateWidget(req, res) {
         $set: updates,
         $inc: { version: 1 },
       },
-      { new: true, runValidators: true },
+      { returnDocument: "after", runValidators: true },
     );
 
     if (!widget) {
@@ -268,7 +268,7 @@ export async function deleteWidget(req, res) {
           isActive: false,
         },
       },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     if (!widget) {

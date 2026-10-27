@@ -1,6 +1,7 @@
 import "dotenv/config";
 import app from "./src/app.js";
 import connectDB from "./src/config/db.js";
+import { startNotificationWorker } from "./src/services/notification.worker.js";
 
 const PORT = process.env.PORT || 5000;
 
@@ -10,6 +11,8 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`LeadNest API running at http://localhost:${PORT}`);
   });
+
+  startNotificationWorker();
 }
 
 startServer().catch((error) => {
