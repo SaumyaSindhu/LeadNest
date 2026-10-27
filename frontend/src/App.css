@@ -1,0 +1,166 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 16px;
+  background: #2457d6;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: white;
+  color: #172033;
+  border: 1px solid #dce1eb;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e5e9f2;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgb(20 35 70 / 4%);
+}
+
+.login-form {
+  width: min(100%, 400px);
+  display: grid;
+  gap: 12px;
+}
+
+.login-form h1,
+.login-form p {
+  margin: 0;
+}
+
+.login-form label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dce1eb;
+  border-radius: 8px;
+}
+
+.topbar,
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar {
+  margin-bottom: 28px;
+}
+
+.topbar h1,
+.topbar p {
+  margin: 0 0 6px;
+}
+
+.topbar p,
+.panel > p {
+  color: #667085;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.stats-grid .panel {
+  margin-bottom: 24px;
+}
+
+.stats-grid h2 {
+  font-size: 32px;
+  margin: 12px 0 0;
+}
+
+.section-heading h2,
+.panel h2 {
+  margin-top: 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf0f5;
+  vertical-align: top;
+}
+
+th {
+  font-size: 13px;
+  color: #667085;
+}
+
+.error {
+  color: #b42318;
+  background: #fff1f0;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+}

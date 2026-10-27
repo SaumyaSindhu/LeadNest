@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import widgetRoutes from "./routes/widget.routes.js";
 import publicWidgetRoutes from "./routes/public-widget.routes.js";
 import submissionRoutes from "./routes/submission.routes.js";
+import leadsRoutes from "./routes/leads.routes.js";
 
 import { authenticate } from "./middleware/auth.middleware.js";
 
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/widgets", widgetRoutes);
 app.use("/api/public/widgets", publicWidgetRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use("/api/leads", leadsRoutes);
 
 app.get("/api/auth/me", authenticate, (req, res) => {
   res.status(200).json({
